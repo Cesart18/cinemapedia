@@ -10,12 +10,11 @@ class HomeScreen extends StatelessWidget {
 
     return Scaffold(
       key: scaffoldKey,
+      // appBar: AppBar(),
 
     // body
 
-    body: const Center(
-      child: Text('Home Screen'),
-    ),
+    body:  Placeholder(),
 
     // drawer
 
