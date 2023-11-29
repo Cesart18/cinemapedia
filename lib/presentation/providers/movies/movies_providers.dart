@@ -1,7 +1,7 @@
+import 'package:cinemapedia/domain/entities/movie/movie.dart';
 import 'package:cinemapedia/presentation/providers/movies/movies_repository_provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../domain/entities/movie/movie.dart';
 
 final nowPlayingMoviesProvider =
     StateNotifierProvider<MoviesNotifier, List<Movie>>((ref) {
@@ -22,8 +22,8 @@ class MoviesNotifier extends StateNotifier<List<Movie>> {
   MoviesNotifier({required this.fetchMoreMovies}) : super([]);
 
   Future<void> loadNextPage() async {
-    currentPage++;
     final List<Movie> movies = await fetchMoreMovies(page: currentPage);
+    currentPage++;
     state = [
       ...state, ...movies
     ];

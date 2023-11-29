@@ -1,29 +1,21 @@
-import 'package:cinemapedia/presentation/providers/movies/movies_providers.dart';
-import 'package:cinemapedia/presentation/providers/movies/movies_repository_provider.dart';
-import 'package:cinemapedia/presentation/widgets/side_menu/side_menu.dart';
+import 'package:cinemapedia/presentation/providers/providers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:cinemapedia/presentation/widgets/widgets.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final scaffoldKey = GlobalKey<ScaffoldState>();
-
-    return Scaffold(
-      key: scaffoldKey,
+    return const Scaffold(
       // appBar: AppBar(),
-
       // body
-
-      body: const _HomeVeiw(),
-
+      body: _HomeVeiw(),
       // drawer
-
-      drawer: SideMenu(
-        scaffoldKey: scaffoldKey,
-      ),
+      // drawer:  SideMenu(),
+      // bottom navigationbar
+      bottomNavigationBar: CustomBottonNavigation(),
     );
   }
 }
@@ -36,23 +28,20 @@ class _HomeVeiw extends ConsumerStatefulWidget {
 }
 
 class _HomeVeiwState extends ConsumerState<_HomeVeiw> {
+  bool hasLoadedMovies = false;
   @override
   void initState() {
     super.initState();
+
     ref.read(nowPlayingMoviesProvider.notifier).loadNextPage();
   }
 
   @override
   Widget build(BuildContext context) {
-    final moviesProvider = ref.watch(nowPlayingMoviesProvider);
-    return ListView.builder(
-        itemCount: moviesProvider.length,
-        itemBuilder: (context, index) {
-          final movies = moviesProvider[index];
-          return ListTile(
-            title: Text(movies.title),
-            subtitle: Text(movies.originalTitle),
-          );
-        });
+    // final moviesProvider = ref.watch(nowPlayingMoviesProvider);
+    final slideShowMovies = ref.watch(moviesSlideShowProvider);
+    return Column(
+      children: [const CustomAppBar(), MovieSlideShow(movies: slideShowMovies)],
+    );
   }
 }

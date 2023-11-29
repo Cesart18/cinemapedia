@@ -25,7 +25,7 @@ class ConfigScreen extends ConsumerWidget {
         ],
       ),
       body: const _ConfigVeiw(),
-      drawer: SideMenu(scaffoldKey: scaffoldKey),
+      drawer: const SideMenu(),
     );
   }
 }
