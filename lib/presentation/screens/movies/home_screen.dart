@@ -38,10 +38,18 @@ class _HomeVeiwState extends ConsumerState<_HomeVeiw> {
 
   @override
   Widget build(BuildContext context) {
-    // final moviesProvider = ref.watch(nowPlayingMoviesProvider);
+    final nowPlayingMovies = ref.watch(nowPlayingMoviesProvider);
     final slideShowMovies = ref.watch(moviesSlideShowProvider);
     return Column(
-      children: [const CustomAppBar(), MovieSlideShow(movies: slideShowMovies)],
+      children: [
+        const CustomAppBar(),
+         MovieSlideShow(movies: slideShowMovies),
+         MoviesHoritzontalListveiw(movies: nowPlayingMovies,
+         title: 'En cines',
+         subTitle: 'Lunes 20',
+         loadNextPage: () => ref.read(nowPlayingMoviesProvider.notifier).loadNextPage(),
+        )
+         ],
     );
   }
 }
