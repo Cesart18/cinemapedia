@@ -16,7 +16,7 @@ class MovieMapper {
       popularity: movieDb.popularity,
       posterPath: movieDb.posterPath != ''
           ? 'https://image.tmdb.org/t/p/w500/${movieDb.posterPath}'
-          : 'no-poster',
+          : 'https://lasaclipa.org/assets/uploads/no-image-available.png',
       releaseDate: movieDb.releaseDate,
       title: movieDb.title,
       video: movieDb.video,
