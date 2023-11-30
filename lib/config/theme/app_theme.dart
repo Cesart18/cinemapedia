@@ -11,7 +11,7 @@ class AppTheme {
   final int selectedColor;
   final bool isDarkMode;
 
-  AppTheme({this.selectedColor = 0, this.isDarkMode = false});
+  AppTheme({this.selectedColor = 0, this.isDarkMode = true});
 
   ThemeData getTheme() => ThemeData(
       colorSchemeSeed: colorsList[selectedColor],

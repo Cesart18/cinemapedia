@@ -2,6 +2,7 @@ import 'package:animate_do/animate_do.dart';
 import 'package:card_swiper/card_swiper.dart';
 import 'package:cinemapedia/domain/entities/movie/movie.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 class MovieSlideShow extends StatelessWidget {
   final List<Movie> movies;
@@ -24,7 +25,8 @@ class MovieSlideShow extends StatelessWidget {
         itemCount: movies.length,
         itemBuilder: (context, index) {
           final movie = movies[index];
-          return _SlideImage(imageurl: movie.backdropPath);
+          return _SlideImage(imageurl: movie.backdropPath,
+          movieId: '${movie.id}',);
         },
       ),
     );
@@ -33,7 +35,8 @@ class MovieSlideShow extends StatelessWidget {
 
 class _SlideImage extends StatelessWidget {
   final String imageurl;
-  const _SlideImage({required this.imageurl});
+  final String movieId;
+  const _SlideImage({required this.imageurl, required this.movieId});
 
   @override
   Widget build(BuildContext context) {
@@ -58,7 +61,9 @@ class _SlideImage extends StatelessWidget {
                         decoration: BoxDecoration(color: Colors.black12),
                       );
                     }
-                    return FadeIn(child: child);
+                    return GestureDetector(
+                        onTap: () => context.push('/movie/$movieId'),
+                        child: FadeIn(child: child));
                   },
                 ))));
   }
