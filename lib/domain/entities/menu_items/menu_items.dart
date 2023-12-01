@@ -18,7 +18,7 @@ final List<MenuItem> menuItems = [
       title: 'Home',
       subTitle: 'Home Screen',
       icon: Icons.home,
-      link: '/'),
+      link: '/home/0'),
   MenuItem(
       title: 'Configuracion',
       subTitle: 'Configuracion del usuario',

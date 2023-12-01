@@ -1,5 +1,4 @@
 import 'package:cinemapedia/config/theme/provider/theme_provider.dart';
-import 'package:cinemapedia/presentation/widgets/side_menu/side_menu.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -25,7 +24,6 @@ class ConfigScreen extends ConsumerWidget {
         ],
       ),
       body: const _ConfigVeiw(),
-      drawer: const SideMenu(),
     );
   }
 }
