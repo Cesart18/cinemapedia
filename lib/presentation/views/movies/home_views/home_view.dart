@@ -65,12 +65,7 @@ class HomeVeiwState extends ConsumerState<HomeVeiw> {
                 loadNextPage: () =>
                     ref.read(upComingMoviesProvider.notifier).loadNextPage(),
               ),
-              MoviesHoritzontalListveiw(
-                movies: popularMovies,
-                title: 'Populares',
-                loadNextPage: () =>
-                    ref.read(popularMoviesProvider.notifier).loadNextPage(),
-              ),
+              
               MoviesHoritzontalListveiw(
                 movies: topRatedMovies,
                 title: 'Mejor calificadas',

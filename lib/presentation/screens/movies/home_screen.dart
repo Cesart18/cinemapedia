@@ -1,4 +1,4 @@
-import 'package:cinemapedia/presentation/views/veiws.dart';
+import 'package:cinemapedia/presentation/views/views.dart';
 import 'package:flutter/material.dart';
 import 'package:cinemapedia/presentation/widgets/widgets.dart';
 
@@ -8,8 +8,10 @@ class HomeScreen extends StatelessWidget {
 
   final veiwRoutes = const <Widget>[
     HomeVeiw(),
-    FavoritesVeiw(),
+    PopularView(),
+    FavoritesView(),
     ConfigScreen(),
+
   ];
 
   @override

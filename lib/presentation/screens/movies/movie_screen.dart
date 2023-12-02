@@ -210,12 +210,29 @@ class _Actors extends ConsumerWidget {
   }
 }
 
-class _CustomSliverAppBar extends StatelessWidget {
+/*
+ aqui simplemente agrego un future provider con el family 
+ y el autodispose que ayuda a que pueda cerrarse 
+
+ el future provider permite obtener un valor futuro asincrono y el familiy permite obtenerlo de otro provider
+ sin tener que crear todo el arbol completo de gestor de estado para obtener el valor
+
+*/
+
+final isFavoriteProvider = FutureProvider.family.autoDispose((ref, int movieId) {
+  final localProvider = ref.watch(localStorageRepositoryProvider);
+  return localProvider.isMovieFavorite(movieId);
+},);
+
+class _CustomSliverAppBar extends ConsumerWidget {
   final Movie movie;
   const _CustomSliverAppBar({required this.movie});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, ref) {
+
+    final isFavorite = ref.watch(isFavoriteProvider(movie.id));
+
     final size = MediaQuery.of(context).size;
     return SliverAppBar(
       backgroundColor: Colors.black,
@@ -223,15 +240,21 @@ class _CustomSliverAppBar extends StatelessWidget {
       foregroundColor: Colors.white,
       actions: [
         IconButton(
-            onPressed: () {
-              // TODO: Realizar el toggle
+            onPressed: () async{
+              // ref.read(localStorageRepositoryProvider).toggleFavorite(movie);
+
+             await ref.read(favoriteMoviesProvider.notifier).toggleFavorite(movie);
+
+              ref.invalidate(isFavoriteProvider(movie.id));
             },
-            icon:
-                //  Icon(Icons.favorite_outline_rounded)
-                const Icon(
-              Icons.favorite_rounded,
-              color: Colors.red,
-            ))
+            icon: isFavorite.when(
+              data: (isFavorite) => isFavorite
+              ? const Icon(Icons.favorite_rounded, color: Colors.red,)
+              : const Icon(Icons.favorite_border),
+               error: (_,__) => throw UnimplementedError(),
+                loading: ()=> const CircularProgressIndicator(strokeWidth: 2,))
+               
+            )
       ],
       flexibleSpace: FlexibleSpaceBar(
         centerTitle: false,
