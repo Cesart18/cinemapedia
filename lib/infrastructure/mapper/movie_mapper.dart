@@ -35,7 +35,7 @@ class MovieMapper {
       overview: movieD.overview,
       popularity: movieD.popularity,
       posterPath: movieD.posterPath != ''
-          ? 'https://image.tmdb.org/t/p/w500/${movieD.backdropPath}'
+          ? 'https://image.tmdb.org/t/p/w500/${movieD.posterPath}'
           : 'https://lasaclipa.org/assets/uploads/no-image-available.png',
       releaseDate: movieD.releaseDate,
       title: movieD.title,

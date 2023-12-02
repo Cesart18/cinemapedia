@@ -1,12 +1,16 @@
 import 'package:animate_do/animate_do.dart';
 import 'package:cinemapedia/domain/entities/movie/movie.dart';
 import 'package:cinemapedia/presentation/providers/providers.dart';
+import 'package:cinemapedia/presentation/widgets/movies/similar_movies.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class MovieScreen extends ConsumerStatefulWidget {
   final String movieId;
-  const MovieScreen({super.key, required this.movieId});
+  const MovieScreen({
+    super.key,
+    required this.movieId,
+  });
 
   @override
   MovieScreenState createState() => MovieScreenState();
@@ -41,7 +45,9 @@ class MovieScreenState extends ConsumerState<MovieScreen> {
           SliverList(
               delegate: SliverChildBuilderDelegate(
             childCount: 1,
-            (context, index) => _MovieDetails(movie: movie),
+            (context, index) => _MovieDetails(
+              movie: movie,
+            ),
           ))
         ],
       ),
@@ -51,7 +57,9 @@ class MovieScreenState extends ConsumerState<MovieScreen> {
 
 class _MovieDetails extends StatelessWidget {
   final Movie movie;
-  const _MovieDetails({required this.movie});
+  const _MovieDetails({
+    required this.movie,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -105,7 +113,6 @@ class _MovieDetails extends StatelessWidget {
         Padding(
           padding: const EdgeInsets.all(8),
 
-          // TODO: cambiar el chip por un boton o peliculas similares
           // y que me redireccione a la pagina donde salen los generos
           child: Wrap(
             children: [
@@ -124,9 +131,13 @@ class _MovieDetails extends StatelessWidget {
         _Actors(
           movieId: movie.id.toString(),
         ),
+
+        // * similar movies
+        SimilarMovies(movieId: movie.id),
+
         const SizedBox(
           height: 50,
-        )
+        ),
       ],
     );
   }
@@ -210,6 +221,18 @@ class _CustomSliverAppBar extends StatelessWidget {
       backgroundColor: Colors.black,
       expandedHeight: size.height * 0.7,
       foregroundColor: Colors.white,
+      actions: [
+        IconButton(
+            onPressed: () {
+              // TODO: Realizar el toggle
+            },
+            icon:
+                //  Icon(Icons.favorite_outline_rounded)
+                const Icon(
+              Icons.favorite_rounded,
+              color: Colors.red,
+            ))
+      ],
       flexibleSpace: FlexibleSpaceBar(
         centerTitle: false,
         titlePadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
@@ -230,29 +253,57 @@ class _CustomSliverAppBar extends StatelessWidget {
                 },
               ),
             ),
-            const SizedBox.expand(
-              child: DecoratedBox(
-                  decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                          stops: [0.7, 1.0],
-                          begin: Alignment.topCenter,
-                          end: Alignment.bottomCenter,
-                          colors: [Colors.transparent, Colors.black87]))),
+            const _CustomGradient(colors: [
+              Colors.black87,
+              Colors.transparent,
+            ], stops: [0.0,0.2],
+            begin: Alignment.topRight,
+            end: Alignment.bottomLeft,
             ),
-            const SizedBox.expand(
-              child: DecoratedBox(
-                  decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                          stops: [0.0, 0.3],
-                          begin: Alignment.topLeft,
-                          colors: [
-                            Colors.black87,
-                            Colors.transparent,
-                          ]))),
+
+            const _CustomGradient(colors: [
+              Colors.transparent,
+              Colors.black54,
+            ], stops: [0.8,1.0],
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
             ),
+
+
+            const _CustomGradient(colors: [
+              Colors.black87,
+              Colors.transparent,
+            ], stops: [0.0,0.3],
+            begin: Alignment.topLeft,
+            ),
+
+            
           ],
         ),
       ),
+    );
+  }
+}
+
+class _CustomGradient extends StatelessWidget {
+  final List<Color> colors;
+  final List<double>? stops;
+  final AlignmentGeometry begin;
+  final AlignmentGeometry end;
+  const _CustomGradient({
+    required this.colors,
+    required this.stops,
+    this.begin = Alignment.centerLeft,
+    this.end = Alignment.centerRight,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox.expand(
+      child: DecoratedBox(
+          decoration: BoxDecoration(
+              gradient: LinearGradient(
+                  stops: stops, begin: begin, end: end, colors: colors))),
     );
   }
 }
