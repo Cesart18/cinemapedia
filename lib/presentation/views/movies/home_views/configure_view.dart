@@ -8,9 +8,7 @@ class ConfigScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, ref) {
     final isDardMode = ref.watch(themeNotifierProvider).isDarkMode;
-    final scaffoldKey = GlobalKey<ScaffoldState>();
     return Scaffold(
-      key: scaffoldKey,
       appBar: AppBar(
         title: const Text('Configuracion'),
         actions: [
@@ -35,30 +33,56 @@ class _ConfigVeiw extends ConsumerWidget {
   Widget build(BuildContext context, ref) {
     final colorList = ref.watch(colorListProvider);
     final selectedColor = ref.watch(themeNotifierProvider).selectedColor;
+    final isDardMode = ref.watch(themeNotifierProvider).isDarkMode;
+    final colors = Theme.of(context).colorScheme;
+
+    final nameOfColor = <String>[
+      'Morado',
+      'Naranja',
+      'Verde',
+      'Azul',
+      'Amarillo',
+      'Rojo',
+      'Blanco'
+    ];
     return SafeArea(
         child: Column(
       children: [
-        Expanded(
-            child: ListView.builder(
-          itemCount: colorList.length,
-          itemBuilder: (context, index) {
-            final color = colorList[index];
-            return RadioListTile(
-              activeColor: color,
-              title: Text(
-                'Este Color',
-                style: TextStyle(color: color),
+        ExpansionTile(
+            title: Text(
+              'Colores',
+              style: TextStyle(color: colors.primary),
+            ),
+            initiallyExpanded: true,
+            children: [
+              ListView.builder(
+                shrinkWrap: true,
+                itemCount: colorList.length,
+                itemBuilder: (context, index) {
+                  final color = colorList[index];
+                  return RadioListTile(
+                    activeColor: (color == Colors.white && !isDardMode)
+                        ? Colors.black
+                        : color,
+                    title: Text(
+                      nameOfColor[index],
+                      style: TextStyle(
+                        color: (color == Colors.white && !isDardMode)
+                            ? Colors.black
+                            : color,
+                      ),
+                    ),
+                    value: index,
+                    groupValue: selectedColor,
+                    onChanged: (value) {
+                      ref
+                          .read(themeNotifierProvider.notifier)
+                          .changeColorIndex(index);
+                    },
+                  );
+                },
               ),
-              value: index,
-              groupValue: selectedColor,
-              onChanged: (value) {
-                ref
-                    .read(themeNotifierProvider.notifier)
-                    .changeColorIndex(index);
-              },
-            );
-          },
-        )),
+            ]),
         FilledButton(onPressed: () {}, child: const Text('Prueba de color'))
       ],
     ));

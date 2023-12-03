@@ -1,5 +1,4 @@
 import 'package:animate_do/animate_do.dart';
-import 'package:cinemapedia/config/helpers/human_formats.dart';
 import 'package:cinemapedia/domain/entities/movie/movie.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -129,6 +128,7 @@ class _Slide extends StatelessWidget {
                 style: textStyle.titleSmall,
               ),
             ),
+           const Expanded(child: SizedBox()),
             // *Rating
             SizedBox(
               width: 150,
@@ -146,11 +146,11 @@ class _Slide extends StatelessWidget {
                     style: textStyle.bodyMedium
                         ?.copyWith(color: Colors.yellow.shade800),
                   ),
-                  const Spacer(),
-                  Text(
-                    HumanFormats.number(movie.popularity),
-                    style: textStyle.bodySmall,
-                  )
+                  // const Spacer(),
+                  // Text(
+                  //   HumanFormats.number(movie.popularity),
+                  //   style: textStyle.bodySmall,
+                  // )
                 ],
               ),
             )

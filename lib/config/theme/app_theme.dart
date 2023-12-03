@@ -4,7 +4,10 @@ final List<Color> colorsList = [
   Colors.deepPurpleAccent,
   Colors.deepOrangeAccent,
   Colors.green,
-  Colors.blue
+  Colors.blue,
+  Colors.yellow,
+  Colors.red,
+  Colors.white
 ];
 
 class AppTheme {

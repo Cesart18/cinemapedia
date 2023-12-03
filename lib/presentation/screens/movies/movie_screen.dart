@@ -1,7 +1,9 @@
 import 'package:animate_do/animate_do.dart';
+import 'package:cinemapedia/config/helpers/human_formats.dart';
 import 'package:cinemapedia/domain/entities/movie/movie.dart';
 import 'package:cinemapedia/presentation/providers/providers.dart';
 import 'package:cinemapedia/presentation/widgets/movies/similar_movies.dart';
+import 'package:cinemapedia/presentation/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -68,69 +70,17 @@ class _MovieDetails extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Padding(
-          padding: const EdgeInsets.all(8),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // *imagen
-              ClipRRect(
-                borderRadius: BorderRadius.circular(20),
-                child: Image.network(
-                  movie.posterPath,
-                  width: size.width * 0.3,
-                  fit: BoxFit.cover,
-                  height: 200,
-                ),
-              ),
-
-              // * Descripcion
-              const SizedBox(
-                width: 10,
-              ),
-              SizedBox(
-                width: (size.width - 40) * 0.7,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      movie.title,
-                      style: textStyle.titleLarge,
-                    ),
-                    const SizedBox(
-                      height: 5,
-                    ),
-                    Text(
-                      movie.overview,
-                    ),
-                  ],
-                ),
-              )
-            ],
-          ),
-        ),
+        _TileAndOverview(movie: movie, size: size, textStyle: textStyle),
         // generos de la pelicula
-        Padding(
-          padding: const EdgeInsets.all(8),
-
-          // y que me redireccione a la pagina donde salen los generos
-          child: Wrap(
-            children: [
-              ...movie.genreIds.map((gender) => Container(
-                    margin: const EdgeInsets.only(right: 10),
-                    child: Chip(
-                      label: Text(gender),
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20)),
-                    ),
-                  ))
-            ],
-          ),
-        ),
+        _Genres(movie: movie),
 
         _Actors(
           movieId: movie.id.toString(),
         ),
+
+        // * Videos
+
+        VideoPlayer(movieId: movie.id),
 
         // * similar movies
         SimilarMovies(movieId: movie.id),
@@ -139,6 +89,117 @@ class _MovieDetails extends StatelessWidget {
           height: 50,
         ),
       ],
+    );
+  }
+}
+
+class _Genres extends StatelessWidget {
+  const _Genres({
+    required this.movie,
+  });
+
+  final Movie movie;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(8),
+    
+      // y que me redireccione a la pagina donde salen los generos
+      child: Wrap(
+        children: [
+          ...movie.genreIds.map((gender) => Container(
+                margin: const EdgeInsets.only(right: 10),
+                child: Chip(
+                  label: Text(gender),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20)),
+                ),
+              ))
+        ],
+      ),
+    );
+  }
+}
+
+class _TileAndOverview extends StatelessWidget {
+  const _TileAndOverview({
+    required this.movie,
+    required this.size,
+    required this.textStyle,
+  });
+
+  final Movie movie;
+  final Size size;
+  final TextTheme textStyle;
+
+  @override
+  Widget build(BuildContext context) {
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 8,vertical: 15),
+      child: SizedBox(
+        height: 220,
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // *imagen
+            ClipRRect(
+              borderRadius: BorderRadius.circular(20),
+              child: Image.network(
+                movie.posterPath,
+                width: size.width * 0.3,
+                fit: BoxFit.cover,
+                height: double.infinity,
+              ),
+            ),
+            
+            // * Descripcion
+            const SizedBox(
+              width: 10,
+            ),
+            SizedBox(
+              width: (size.width - 40) * 0.7,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    movie.title,
+                    style: textStyle.titleLarge,
+                  ),
+                  const SizedBox(
+                    height: 5,
+                  ),
+                  Expanded(
+                    child: Text(
+                      movie.overview,
+                      // maxLines: 8,
+                      // overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                  
+                  Row(
+                    children: [
+                      Icon(Icons.star_half, color: Colors.yellow.shade800,),
+                      const SizedBox(width: 5,),
+                      Text(movie.voteAverage.toStringAsFixed(2),
+                      style: textStyle.bodyMedium?.copyWith(color: Colors.yellow.shade800),)
+                    ],
+                  ),
+                  Row(
+                    children: [
+                      const Text('Estreno:',
+                      style: TextStyle(fontWeight: FontWeight.bold),),
+                      const SizedBox(width: 5,),
+                      Text(HumanFormats.shortDate(movie.releaseDate))
+                    ],
+                  )
+                ],
+              ),
+            )
+          ],
+        ),
+      ),
     );
   }
 }
@@ -219,10 +280,12 @@ class _Actors extends ConsumerWidget {
 
 */
 
-final isFavoriteProvider = FutureProvider.family.autoDispose((ref, int movieId) {
-  final localProvider = ref.watch(localStorageRepositoryProvider);
-  return localProvider.isMovieFavorite(movieId);
-},);
+final isFavoriteProvider = FutureProvider.family.autoDispose(
+  (ref, int movieId) {
+    final localProvider = ref.watch(localStorageRepositoryProvider);
+    return localProvider.isMovieFavorite(movieId);
+  },
+);
 
 class _CustomSliverAppBar extends ConsumerWidget {
   final Movie movie;
@@ -230,9 +293,8 @@ class _CustomSliverAppBar extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, ref) {
-
     final isFavorite = ref.watch(isFavoriteProvider(movie.id));
-
+    final scaffoldBackground = Theme.of(context).scaffoldBackgroundColor;
     final size = MediaQuery.of(context).size;
     return SliverAppBar(
       backgroundColor: Colors.black,
@@ -240,25 +302,38 @@ class _CustomSliverAppBar extends ConsumerWidget {
       foregroundColor: Colors.white,
       actions: [
         IconButton(
-            onPressed: () async{
+            onPressed: () async {
               // ref.read(localStorageRepositoryProvider).toggleFavorite(movie);
 
-             await ref.read(favoriteMoviesProvider.notifier).toggleFavorite(movie);
+              await ref
+                  .read(favoriteMoviesProvider.notifier)
+                  .toggleFavorite(movie);
 
               ref.invalidate(isFavoriteProvider(movie.id));
             },
             icon: isFavorite.when(
-              data: (isFavorite) => isFavorite
-              ? const Icon(Icons.favorite_rounded, color: Colors.red,)
-              : const Icon(Icons.favorite_border),
-               error: (_,__) => throw UnimplementedError(),
-                loading: ()=> const CircularProgressIndicator(strokeWidth: 2,))
-               
-            )
+                data: (isFavorite) => isFavorite
+                    ? const Icon(
+                        Icons.favorite_rounded,
+                        color: Colors.red,
+                      )
+                    : const Icon(Icons.favorite_border),
+                error: (_, __) => throw UnimplementedError(),
+                loading: () => const CircularProgressIndicator(
+                      strokeWidth: 2,
+                    )))
       ],
       flexibleSpace: FlexibleSpaceBar(
         centerTitle: false,
-        titlePadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+        title: _CustomGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [
+            Colors.transparent,
+            scaffoldBackground
+          ],
+           stops:const  [0.7,1.0]),
+        titlePadding: const EdgeInsets.only(bottom: 0),
         // title: Text(
         //   movie.title,
         //   style: const TextStyle(fontSize: 20),
@@ -276,31 +351,32 @@ class _CustomSliverAppBar extends ConsumerWidget {
                 },
               ),
             ),
-            const _CustomGradient(colors: [
-              Colors.black87,
-              Colors.transparent,
-            ], stops: [0.0,0.2],
-            begin: Alignment.topRight,
-            end: Alignment.bottomLeft,
+            const _CustomGradient(
+              colors: [
+                Colors.black87,
+                Colors.transparent,
+              ],
+              stops: [0.0, 0.2],
+              begin: Alignment.topRight,
+              end: Alignment.bottomLeft,
             ),
-
-            const _CustomGradient(colors: [
-              Colors.transparent,
-              Colors.black54,
-            ], stops: [0.8,1.0],
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
+            const _CustomGradient(
+              colors: [
+                Colors.transparent,
+                Colors.black54,
+              ],
+              stops: [0.8, 1.0],
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
             ),
-
-
-            const _CustomGradient(colors: [
-              Colors.black87,
-              Colors.transparent,
-            ], stops: [0.0,0.3],
-            begin: Alignment.topLeft,
+            const _CustomGradient(
+              colors: [
+                Colors.black87,
+                Colors.transparent,
+              ],
+              stops: [0.0, 0.3],
+              begin: Alignment.topLeft,
             ),
-
-            
           ],
         ),
       ),

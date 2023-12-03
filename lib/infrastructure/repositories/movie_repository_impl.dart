@@ -1,5 +1,6 @@
 import 'package:cinemapedia/domain/datasource/movie_datasource.dart';
 import 'package:cinemapedia/domain/entities/movie/movie.dart';
+import 'package:cinemapedia/domain/entities/movie/video.dart';
 import 'package:cinemapedia/domain/repositories/movie_repository.dart';
 
 class MovieRepositoryImpl extends MoviesRepository {
@@ -40,6 +41,11 @@ class MovieRepositoryImpl extends MoviesRepository {
   @override
   Future<List<Movie>> getSimilaR(int id) {
     return movieDatasource.getSimilaR(id);
+  }
+
+  @override
+  Future<List<Video>> getYoutubeVideo(int movieId) {
+    return movieDatasource.getYoutubeVideo(movieId);
   }
   
  
